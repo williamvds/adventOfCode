@@ -1,2 +1,4 @@
+KEEP = $(wildcard *.cpp) Makefile
+CLEAN = $(filter-out ${KEEP}, $(wildcard *))
 clean:
-	rm -rf !(*.cpp|Makefile)
+	for FILE in ${CLEAN}; do rm $$FILE; done
