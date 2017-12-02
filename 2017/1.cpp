@@ -1,3 +1,4 @@
+// https://adventofcode.com/2017/day/1
 #define nl '\n'
 #include <iostream>
 using namespace std;
