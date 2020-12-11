@@ -1,14 +1,15 @@
+#include <functional>
 #include <istream>
 #include <string_view>
 #include <vector>
 
-std::vector<size_t> find_indices(std::string_view string, char character)
+auto find_indices(std::string_view string, char character) -> std::vector<size_t>
 {
 	std::vector<size_t> indices;
-	size_t index;
-	while ((index = string.find(character)) != std::string_view::npos) {
+	size_t index = 0;
+	while ((index = string.find(character, index)) != std::string_view::npos) {
 		indices.push_back(index);
-		string = string.substr(index + 1);
+		index++;
 	}
 
 	return indices;
@@ -21,24 +22,46 @@ auto validate(std::string_view string, char character, unsigned min, unsigned ma
 	return min <= count && count <= max;
 }
 
-int day2(std::istream& stream) {
+template<typename T>
+auto find(const std::vector<T>& vector, T value) -> bool {
+	return std::find(vector.begin(), vector.end(), value) != vector.end();
+}
+
+auto validate2(std::string_view string, char character, unsigned index1, unsigned index2)
+	-> bool
+{
+	auto indices = find_indices(string, character);
+	return find(indices, static_cast<size_t>(index1 - 1)) != find(indices, static_cast<size_t>(index2 - 1));
+}
+
+using Validator = std::function<bool(std::string_view, char, unsigned, unsigned)>;
+int process(std::istream& stream, Validator validator)
+{
 	unsigned total = 0;
 
 	while (!stream.eof())
 	{
-		int min, max;
+		int number1, number2;
 		char character;
 		std::string string;
 
-		stream >> min;
+		stream >> number1;
 		stream.ignore();
-		stream >> max >> character;
+		stream >> number2 >> character;
 		stream.ignore();
 		stream >> string;
 
-		if (validate(string, character, min, max))
+		if (validator(string, character, number1, number2))
 			total++;
 	}
 
 	return total;
+}
+
+int day2(std::istream& stream) {
+	return process(stream, validate);
+}
+
+int day2Part2(std::istream& stream) {
+	return process(stream, validate2);
 }
