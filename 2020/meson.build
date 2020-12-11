@@ -7,6 +7,7 @@ fmt = dependency('fmt')
 libaoc2020 = library(
   'aoc2020',
   'day1.cpp',
+  'day2.cpp',
   )
 
 executable('aoc2020',
