@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <istream>
+#include <set>
 
 constexpr auto rowUpper = 'B';
 constexpr auto rowLower = 'F';
@@ -44,4 +45,19 @@ int day5(std::istream& stream) {
 	}
 
 	return maxId;
+}
+
+int day5Part2(std::istream& stream) {
+	std::set<unsigned> seatIds;
+
+	std::string line;
+	while (stream >> line) {
+		const auto seat = seat_from_partition(line);
+		seatIds.insert(seat.id());
+	}
+
+	const auto found = std::adjacent_find(seatIds.begin(), seatIds.end(),
+		[](unsigned left, unsigned right) { return right - left > 1; });
+
+	return *found + 1;
 }
