@@ -1,8 +1,11 @@
 #include <istream>
 #include <map>
+#include <numeric>
 #include <regex>
 
 using namespace std::literals::string_view_literals;
+
+constexpr auto targetBag = "shiny gold";
 
 struct BagRule {
 	std::string name;
@@ -11,7 +14,7 @@ struct BagRule {
 
 using BagRules = std::map<std::string, BagRule>;
 
-auto read_bag_rule(const std::string rule) -> BagRule {
+auto parse_bag_rule(const std::string rule) -> BagRule {
 	const auto subjectRegex = std::regex("(.+) bags contain (.*)");
 	const auto containRegex = std::regex(R"((\d+) (.*?)(?: bags?[,.] ?)(.*))");
 	BagRule result;
@@ -32,6 +35,18 @@ auto read_bag_rule(const std::string rule) -> BagRule {
 	return result;
 }
 
+auto parse_bag_rules(std::istream& stream) -> BagRules {
+	BagRules rules;
+
+	std::string line;
+	while (std::getline(stream, line)) {
+		auto rule = parse_bag_rule(line);
+		rules.insert({rule.name, rule});
+	}
+
+	return rules;
+}
+
 auto find_bag(const BagRules& rules, BagRule initialBag, std::string_view target)
 	-> bool {
 	if (initialBag.name == target)
@@ -44,14 +59,7 @@ auto find_bag(const BagRules& rules, BagRule initialBag, std::string_view target
 }
 
 int day7(std::istream& stream) {
-	constexpr auto targetBag = "shiny gold";
-
-	BagRules rules;
-	std::string line;
-	while (std::getline(stream, line)) {
-		auto rule = read_bag_rule(line);
-		rules.insert({rule.name, rule});
-	}
+	const auto rules = parse_bag_rules(stream);
 
 	size_t total = 0;
 	for (const auto& [name, rule] : rules) {
@@ -63,4 +71,16 @@ int day7(std::istream& stream) {
 	}
 
 	return total;
+}
+
+auto count_bags(const BagRules& rules, BagRule initialBag) -> size_t {
+	return std::accumulate(initialBag.contained.begin(), initialBag.contained.end(),
+		0, [&](auto sum, const auto& pair) {
+			return sum + pair.second + pair.second * count_bags(rules, rules.at(pair.first));
+		});
+}
+
+int day7Part2(std::istream& stream) {
+	const auto rules = parse_bag_rules(stream);
+	return count_bags(rules, rules.at(targetBag));
 }
