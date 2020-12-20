@@ -12,6 +12,7 @@ libaoc2020 = library(
   'day4.cpp',
   'day5.cpp',
   'day6.cpp',
+  'day7.cpp',
   )
 
 executable('aoc2020',
