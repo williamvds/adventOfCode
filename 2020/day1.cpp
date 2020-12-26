@@ -4,20 +4,7 @@
 #include <tuple>
 #include <vector>
 
-template<class Iterator, class T = typename std::iterator_traits<Iterator>::value_type>
-auto combination_pairs(Iterator begin, Iterator end) -> std::vector<std::pair<T, T>> {
-	std::vector<std::pair<T, T>> results;
-
-	for (auto first = begin; first < end; first++)
-	{
-		for (auto second = first + 1; second < end; second++)
-		{
-			results.push_back(std::make_pair(*first, *second));
-		}
-	}
-
-	return results;
-}
+#include "shared.hpp"
 
 template<class Iterator, class T = typename std::iterator_traits<Iterator>::value_type>
 auto combination_triples(Iterator begin, Iterator end) -> std::vector<std::tuple<T, T, T>> {
