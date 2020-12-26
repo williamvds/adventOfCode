@@ -12,7 +12,6 @@ enum class Opcode {
 struct Instruction {
 	Opcode opcode;
 	int operand;
-	mutable bool executed = false;
 
 	constexpr Instruction(Opcode opcode, int operand)
 		: opcode{opcode}
@@ -26,28 +25,51 @@ using Program = std::vector<Instruction>;
 struct CPU {
 	int accumulator = 0;
 	size_t pc = 0;
+	size_t previousNop = 0;
+	size_t previousJump = 0;
+	bool loopDetected = false;
 
 	bool execute(const Instruction& instruction) {
-		if (instruction.executed)
+		if (visitedInstructions.contains(pc)) {
+			loopDetected = true;
 			return false;
+		}
+
+		visitedInstructions.insert({pc, true});
 
 		const int& operand = instruction.operand;
 
 		switch (instruction.opcode) {
-			case Opcode::None: break;
-			case Opcode::Jump: pc += operand - 1; break;
+			case Opcode::None: previousNop = pc; break;
+			case Opcode::Jump: jump(operand); break;
 			case Opcode::Add:  accumulator += operand; break;
 		}
 
-		instruction.executed = true;
 		return true;
 	}
 
 	void run(const Program& program) {
-		while (execute(program.at(pc))) {
+		while (pc < program.size() && execute(program.at(pc))) {
 			pc++;
 		}
 	}
+
+	constexpr void jump(int offset) {
+		previousJump = pc;
+		pc += offset - 1;
+	}
+
+	constexpr void reset() {
+		accumulator = 0;
+		pc = 0;
+		previousNop = 0;
+		previousJump = 0;
+		loopDetected = false;
+		visitedInstructions.clear();
+	}
+
+private:
+	std::map<size_t, bool> visitedInstructions;
 };
 
 const std::map<std::string_view, Opcode> mnemonics {
@@ -85,5 +107,30 @@ int day8(std::istream& stream) {
 	CPU cpu;
 	const auto program = parse_program(stream);
 	cpu.run(program);
+	return cpu.accumulator;
+}
+
+int day8Part2(std::istream& stream) {
+	CPU cpu;
+	auto program = parse_program(stream);
+	cpu.run(program);
+
+	auto& previousJump = program.at(cpu.previousJump);
+	auto& previousNop = program.at(cpu.previousNop);
+
+	// Try swapping the last executed jump with a NOP
+	previousJump.opcode = Opcode::None;
+	cpu.reset();
+	cpu.run(program);
+
+	if (!cpu.loopDetected)
+		return cpu.accumulator;
+
+	// Try instead replacing the last executed NOP with a jump
+	previousJump.opcode = Opcode::Jump;
+	previousNop.opcode = Opcode::Jump;
+	cpu.reset();
+	cpu.run(program);
+
 	return cpu.accumulator;
 }
