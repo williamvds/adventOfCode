@@ -1,3 +1,4 @@
+#include <functional>
 #include <iterator>
 #include <utility>
 #include <vector>
@@ -15,4 +16,34 @@ constexpr auto combination_pairs(Iterator begin, Iterator end) -> std::vector<st
 	}
 
 	return results;
+}
+
+enum class RangeValidation {
+	Valid,
+	Invalid,
+	Match,
+};
+
+template<
+	class Iterator,
+	class RangeValidator = std::function<RangeValidation(Iterator, Iterator)>
+>
+constexpr auto find_range(Iterator begin, Iterator end, RangeValidator validator)
+	-> std::pair<Iterator, Iterator> {
+	using R = RangeValidation;
+
+	auto first = begin,
+		 second = first + 1;
+	for (; second != end; second++) {
+		switch (validator(first, second)) {
+			case R::Valid: continue;
+			case R::Invalid:
+				first++;
+				second = first;
+				break;
+			case R::Match: return {first, second};
+		}
+	}
+
+	return {first, second};
 }
