@@ -58,7 +58,7 @@ auto find_bag(const BagRules& rules, BagRule initialBag, std::string_view target
 		});
 }
 
-int day7(std::istream& stream) {
+auto day7(std::istream& stream) -> long {
 	const auto rules = parse_bag_rules(stream);
 
 	size_t total = 0;
@@ -80,7 +80,7 @@ auto count_bags(const BagRules& rules, BagRule initialBag) -> size_t {
 		});
 }
 
-int day7Part2(std::istream& stream) {
+auto day7Part2(std::istream& stream) -> long {
 	const auto rules = parse_bag_rules(stream);
 	return count_bags(rules, rules.at(targetBag));
 }

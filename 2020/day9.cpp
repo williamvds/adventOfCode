@@ -15,10 +15,10 @@ constexpr auto contains_paired_sum(Iterator begin, Iterator end, int sum) -> boo
 	});
 }
 
-int day9(std::istream& stream) {
+auto day9(std::istream& stream) -> long {
 	std::vector<int> history;
 
-	int number;
+	long number;
 	while (stream >> number) {
 		if (history.size() >= historySize &&
 			!contains_paired_sum(history.rbegin(), history.rbegin() + historySize, number))
@@ -30,7 +30,7 @@ int day9(std::istream& stream) {
 	return number;
 }
 
-int day9Part2(std::istream& stream) {
+auto day9Part2(std::istream& stream) -> long {
 	std::vector<int> history;
 
 	std::optional<int> invalidNumber;

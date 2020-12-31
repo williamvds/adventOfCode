@@ -36,7 +36,7 @@ auto read(std::istream& stream) -> std::vector<int> {
 	return entries;
 }
 
-auto day1(std::istream& stream) -> int {
+auto day1(std::istream& stream) -> long {
 	auto entries = read(stream);
 	auto pairs = combination_pairs(entries.begin(), entries.end());
 	auto result = std::find_if(pairs.begin(), pairs.end(), [](auto pair) {
@@ -51,7 +51,7 @@ auto day1(std::istream& stream) -> int {
 	return result->first * result->second;
 }
 
-auto day1Part2(std::istream& stream) -> int {
+auto day1Part2(std::istream& stream) -> long {
 	auto entries = read(stream);
 	auto triples = combination_triples(entries.begin(), entries.end());
 	auto result = std::find_if(triples.begin(), triples.end(), [&](auto triple) {

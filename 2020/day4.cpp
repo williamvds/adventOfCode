@@ -69,7 +69,7 @@ auto read_entry(std::istream& stream) -> StringMap {
 	return parse_map(stringStream);
 }
 
-int day4(std::istream& stream) {
+auto day4(std::istream& stream) -> long {
 	size_t total = 0;
 
 	StringMap map = read_entry(stream);
@@ -145,7 +145,7 @@ auto passport_values_valid(const StringMap& map) -> bool {
 	return true;
 }
 
-int day4Part2(std::istream& stream) {
+auto day4Part2(std::istream& stream) -> long {
 	size_t total = 0;
 
 	StringMap map = read_entry(stream);

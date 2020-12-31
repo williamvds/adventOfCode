@@ -8,7 +8,7 @@ auto get_questions(std::string_view string) -> std::set<char> {
 	return std::set<char>{string.begin(), string.end()};
 }
 
-int day6(std::istream& stream) {
+auto day6(std::istream& stream) -> long {
 	size_t total = 0;
 	std::set<char> questions;
 
@@ -41,7 +41,7 @@ auto read_answer_group(std::istream& stream) -> std::vector<std::string> {
 	return answers;
 }
 
-int day6Part2(std::istream& stream) {
+auto day6Part2(std::istream& stream) -> long {
 	size_t total = 0;
 
 	while (stream) {

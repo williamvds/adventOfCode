@@ -35,7 +35,7 @@ auto seat_from_partition(std::string_view sequence) -> Seat {
 	return Seat{rowRange.lower, columnRange.lower};
 }
 
-int day5(std::istream& stream) {
+auto day5(std::istream& stream) -> long {
 	unsigned maxId = 0;
 
 	std::string line;
@@ -47,7 +47,7 @@ int day5(std::istream& stream) {
 	return maxId;
 }
 
-int day5Part2(std::istream& stream) {
+auto day5Part2(std::istream& stream) -> long {
 	std::set<unsigned> seatIds;
 
 	std::string line;

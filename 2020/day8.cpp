@@ -103,14 +103,14 @@ auto parse_program(std::istream& stream) -> Program {
 	return program;
 }
 
-int day8(std::istream& stream) {
+auto day8(std::istream& stream) -> long {
 	CPU cpu;
 	const auto program = parse_program(stream);
 	cpu.run(program);
 	return cpu.accumulator;
 }
 
-int day8Part2(std::istream& stream) {
+auto day8Part2(std::istream& stream) -> long {
 	CPU cpu;
 	auto program = parse_program(stream);
 	cpu.run(program);

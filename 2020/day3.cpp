@@ -9,7 +9,7 @@ struct Velocity {
 	unsigned x, y;
 };
 
-int slope_collisions(std::istream& stream, Velocity velocity) {
+auto slope_collisions(std::istream& stream, Velocity velocity) -> size_t {
 	std::string row;
 	size_t column = 0, total = 0;
 
@@ -30,11 +30,11 @@ int slope_collisions(std::istream& stream, Velocity velocity) {
 	return total;
 }
 
-int day3(std::istream& stream) {
+auto day3(std::istream& stream) -> long {
 	return slope_collisions(stream, {3, 1});
 }
 
-int day3Part2(std::istream& stream) {
+auto day3Part2(std::istream& stream) -> long {
 	constexpr auto velocities = std::to_array<const Velocity>({
 		{1, 1},
 		{3, 1},

@@ -3,55 +3,55 @@
 #include <map>
 #include <string_view>
 
-int day1(std::istream&);
-int day1Part2(std::istream&);
+long day1(std::istream&);
+long day1Part2(std::istream&);
 
-int day2(std::istream&);
-int day2Part2(std::istream&);
+long day2(std::istream&);
+long day2Part2(std::istream&);
 
-int day3(std::istream&);
-int day3Part2(std::istream&);
+long day3(std::istream&);
+long day3Part2(std::istream&);
 
-int day4(std::istream&);
-int day4Part2(std::istream&);
+long day4(std::istream&);
+long day4Part2(std::istream&);
 
-int day5(std::istream&);
-int day5Part2(std::istream&);
+long day5(std::istream&);
+long day5Part2(std::istream&);
 
-int day6(std::istream&);
-int day6Part2(std::istream&);
+long day6(std::istream&);
+long day6Part2(std::istream&);
 
-int day7(std::istream&);
-int day7Part2(std::istream&);
+long day7(std::istream&);
+long day7Part2(std::istream&);
 
-int day8(std::istream&);
-int day8Part2(std::istream&);
+long day8(std::istream&);
+long day8Part2(std::istream&);
 
-int day9(std::istream&);
-int day9Part2(std::istream&);
+long day9(std::istream&);
+long day9Part2(std::istream&);
 
-int day10(std::istream&);
+long day10(std::istream&);
 
-using Task = std::function<int(std::istream&)>;
+using Task = std::function<long(std::istream&)>;
 
 auto days = std::map<std::string_view, Task>{
-	{"1",   &day1},
-	{"1.2", &day1Part2},
-	{"2",   &day2},
-	{"2.2", &day2Part2},
-	{"3",   &day3},
-	{"3.2", &day3Part2},
-	{"4",   &day4},
-	{"4.2", &day4Part2},
-	{"5",   &day5},
-	{"5.2", &day5Part2},
-	{"6",   &day6},
-	{"6.2", &day6Part2},
-	{"7",   &day7},
-	{"7.2", &day7Part2},
-	{"8",   &day8},
-	{"8.2", &day8Part2},
-	{"9",   &day9},
-	{"9.2", &day9Part2},
-	{"10",  &day10},
+	{"1",    &day1},
+	{"1.2",  &day1Part2},
+	{"2",    &day2},
+	{"2.2",  &day2Part2},
+	{"3",    &day3},
+	{"3.2",  &day3Part2},
+	{"4",    &day4},
+	{"4.2",  &day4Part2},
+	{"5",    &day5},
+	{"5.2",  &day5Part2},
+	{"6",    &day6},
+	{"6.2",  &day6Part2},
+	{"7",    &day7},
+	{"7.2",  &day7Part2},
+	{"8",    &day8},
+	{"8.2",  &day8Part2},
+	{"9",    &day9},
+	{"9.2",  &day9Part2},
+	{"10",   &day10},
 };

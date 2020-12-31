@@ -2,7 +2,7 @@
 #include <istream>
 #include <vector>
 
-int day10(std::istream& stream) {
+auto day10(std::istream& stream) -> long {
 	std::vector<int> ratings { 0 };
 
 	int rating;

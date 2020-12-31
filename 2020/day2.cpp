@@ -35,9 +35,8 @@ auto validate2(std::string_view string, char character, unsigned index1, unsigne
 }
 
 using Validator = std::function<bool(std::string_view, char, unsigned, unsigned)>;
-int process(std::istream& stream, Validator validator)
-{
-	unsigned total = 0;
+auto process(std::istream& stream, Validator validator) -> size_t {
+	size_t total = 0;
 
 	while (!stream.eof())
 	{
@@ -58,10 +57,10 @@ int process(std::istream& stream, Validator validator)
 	return total;
 }
 
-int day2(std::istream& stream) {
+auto day2(std::istream& stream) -> long {
 	return process(stream, validate);
 }
 
-int day2Part2(std::istream& stream) {
+auto day2Part2(std::istream& stream) -> long {
 	return process(stream, validate2);
 }
