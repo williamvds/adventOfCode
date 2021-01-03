@@ -33,6 +33,8 @@ long day9Part2(std::istream&);
 long day10(std::istream&);
 long day10Part2(std::istream&);
 
+long day11(std::istream&);
+
 using Task = std::function<long(std::istream&)>;
 
 auto days = std::map<std::string_view, Task>{
@@ -56,4 +58,5 @@ auto days = std::map<std::string_view, Task>{
 	{"9.2",  &day9Part2},
 	{"10",   &day10},
 	{"10.2", &day10Part2},
+	{"11",   &day11},
 };
