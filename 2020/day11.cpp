@@ -5,6 +5,8 @@
 #include <sstream>
 #include <vector>
 
+#include "position.hpp"
+
 constexpr auto charFloor = '.';
 constexpr auto charEmpty = 'L';
 constexpr auto charOccupied = '#';
@@ -13,23 +15,6 @@ enum class State {
 	Floor,
 	Empty,
 	Occupied,
-};
-
-struct Position {
-	int x, y;
-
-	constexpr auto operator +(const Position& right) const -> Position {
-		return {x + right.x, y + right.y};
-	}
-
-	constexpr auto operator +=(const Position& right) -> Position& {
-		*this = *this + right;
-		return *this;
-	}
-
-	constexpr auto is_in_box(int x1, int y1, int x2, int y2) const -> bool {
-		return x >= x1 && y >= y1 && x <= x2 && y <= y2;
-	}
 };
 
 using Row = std::vector<State>;
