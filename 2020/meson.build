@@ -18,6 +18,7 @@ libaoc2020 = library(
   'day10.cpp',
   'day11.cpp',
   'day12.cpp',
+  include_directories: ['thirdparty'],
   )
 
 executable('aoc2020',
