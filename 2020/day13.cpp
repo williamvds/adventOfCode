@@ -4,12 +4,17 @@
 #include <string>
 #include <vector>
 
-auto parse_bus_lines(std::istream& stream) -> std::vector<int> {
+#include <cx_math.h>
+
+auto parse_bus_lines(std::istream& stream, bool keep_blanks = false) -> std::vector<int> {
 	std::vector<int> lines;
 
 	std::string entry;
 	while (!stream.eof() && std::getline(stream, entry, ',')) {
 		if (entry == "x") {
+			if (keep_blanks)
+				lines.push_back(1);
+
 			continue;
 		}
 
@@ -47,4 +52,20 @@ auto day13(std::istream& stream) -> long {
 		return 0;
 
 	return *result * lines.at(std::distance(delays.begin(), result));
+}
+
+auto day13Part2(std::istream& stream) -> long {
+	stream.ignore(std::numeric_limits<std::streamsize>::max(), stream.widen('\n'));
+	const auto lines = parse_bus_lines(stream, true);
+
+	auto timestamp = 0l;
+	auto step = 1l;
+	for (auto i = 0; i < lines.size(); i++) {
+		const auto line = lines[i];
+		while ((timestamp + i) % line > 0)
+			timestamp += step;
+		step *= lines[i];
+	}
+
+	return timestamp;
 }
