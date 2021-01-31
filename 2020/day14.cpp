@@ -1,9 +1,11 @@
+#include <charconv>
 #include <cstddef>
+#include <functional>
 #include <istream>
 #include <map>
 #include <numeric>
-#include <charconv>
 #include <string_view>
+#include <vector>
 
 using namespace std::literals::string_view_literals;
 
@@ -32,10 +34,32 @@ static_assert(apply_mask("000000", 0b110011) == 0b000000);
 static_assert(apply_mask("010100", 0b110011) == 0b010100);
 static_assert(apply_mask("XXXXXX", 0b110010) == 0b110010);
 
+template<class Container>
+constexpr void apply_address_mask(
+		char mask,
+		unsigned index,
+		uint64_t value,
+		std::insert_iterator<Container> inserter) {
+	switch (mask) {
+		case '0':
+			inserter = value;
+			break;
+		case '1':
+			inserter = value | 1ul << index;
+			break;
+		default:
+			inserter = value & ~(1ul << index);
+			inserter = value | 1ul << index;
+			break;
+	}
+}
+
 class Computer {
 public:
+	using Processor = void(Computer::*)(uint64_t address, uint64_t value);
+
 	constexpr void set_mask(std::string_view mask) { this->mask = mask; }
-	constexpr void set_value(uint64_t address, uint64_t value) {
+	constexpr void set_masked_value(uint64_t address, uint64_t value) {
 		memory.insert_or_assign(address, apply_mask(mask, value));
 	}
 
@@ -46,7 +70,29 @@ public:
 			});
 	}
 
-	void execute_command(std::string_view command) {
+	auto set_masked_address(uint64_t address, uint64_t value) {
+		std::vector<uint64_t> addresses { address };
+
+		for (auto index = 0; index < mask.length(); index++) {
+			std::vector<uint64_t> newAddresses;
+
+			for (auto address : addresses) {
+				apply_address_mask(
+					mask.at(mask.length() - index - 1), index, address,
+					std::inserter(newAddresses, newAddresses.end()));
+			}
+
+			addresses = std::move(newAddresses);
+		}
+
+		for (auto address : addresses) {
+			memory.insert_or_assign(address, value);
+		}
+	}
+
+	void execute_command(
+			std::string_view command,
+			Processor processor = &Computer::set_masked_value) {
 		if (command.starts_with(maskCommandPrefix))
 			set_mask(command.substr(maskCommandPrefix.length()));
 		else if (command.starts_with(memoryCommandPrefix)) {
@@ -66,7 +112,7 @@ public:
 			std::from_chars(valueString.data(),
 					valueString.data() + valueString.length(),
 					value);
-			set_value(address, value);
+			std::invoke(processor, this, address, value);
 		}
 	}
 
@@ -81,6 +127,17 @@ auto day14(std::istream& stream) -> long {
 	std::string command;
 	while (std::getline(stream, command)) {
 		computer.execute_command(command);
+	}
+
+	return computer.sum_memory();
+}
+
+auto day14Part2(std::istream& stream) -> long {
+	Computer computer;
+
+	std::string command;
+	while (std::getline(stream, command)) {
+		computer.execute_command(command, &Computer::set_masked_address);
 	}
 
 	return computer.sum_memory();
