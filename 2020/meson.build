@@ -20,6 +20,7 @@ libaoc2020 = library(
   'day12.cpp',
   'day13.cpp',
   'day14.cpp',
+  'day15.cpp',
   include_directories: ['thirdparty'],
   )
 
