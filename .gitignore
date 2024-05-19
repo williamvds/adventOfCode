@@ -1,1 +1,6 @@
 *.plist
+
+
+# Added by cargo
+
+**/target/
