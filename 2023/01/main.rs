@@ -11,9 +11,8 @@ fn main() {
             let last_pos = line.rfind(is_digit).unwrap();
 
             let bytes = line.as_bytes();
-            let joined = String::from_utf8(vec![bytes[first_pos], bytes[last_pos]]).unwrap();
-
-            return sum + joined.parse::<u32>().unwrap();
+            let int = (bytes[first_pos] as u32) * 10 + (bytes[last_pos] as u32);
+            return sum + int;
         });
 
     println!("{}", result);
