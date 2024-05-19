@@ -1,25 +1,20 @@
 use std::io;
 
 fn main() {
-    let result = io::stdin().lines().fold(0u32, |sum, line| {
-        let result = line.unwrap();
+    let result = io::stdin()
+        .lines()
+        .map(Result::unwrap)
+        .filter(|s| !s.is_empty())
+        .fold(0u32, |sum, line| {
+            let is_digit = |c: char| c.is_digit(10);
+            let first_pos = line.find(is_digit).unwrap();
+            let last_pos = line.rfind(is_digit).unwrap();
 
-        if result.is_empty() {
-            return sum;
-        }
+            let bytes = line.as_bytes();
+            let joined = String::from_utf8(vec![bytes[first_pos], bytes[last_pos]]).unwrap();
 
-        let is_digit = |c: char| c.is_digit(10);
-        let first_pos = result.find(is_digit).unwrap();
-        let last_pos = result.rfind(is_digit).unwrap();
-
-        let joined = String::from_utf8(vec![
-            result.as_bytes()[first_pos],
-            result.as_bytes()[last_pos],
-        ])
-        .unwrap();
-
-        return sum + joined.parse::<u32>().unwrap();
-    });
+            return sum + joined.parse::<u32>().unwrap();
+        });
 
     println!("{}", result);
 }
