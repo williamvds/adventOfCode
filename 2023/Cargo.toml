@@ -6,6 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+phf = { version = "0.11.2", features = ["macros"] }
+
+[dependencies.regex]
+version = "1.10.4"
+features = ["std"]
 
 [[bin]]
 name = "01"
@@ -14,3 +19,7 @@ path = "01/main.rs"
 [[bin]]
 name = "01-2"
 path = "01-2/main.rs"
+
+[[bin]]
+name = "02"
+path = "02/main.rs"
