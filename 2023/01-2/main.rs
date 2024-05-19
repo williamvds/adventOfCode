@@ -22,43 +22,44 @@ fn parse_digit(slice: &str) -> (Option<u32>, usize) {
         .iter()
         .find_map(|(string, int)| {
             if slice.starts_with(string) {
-                Option::Some((int, string.len()))
+                Some((int, string.len()))
             } else {
-                Option::None
+                None
             }
         })
         .map_or_else(
-            || (Option::None, 1),
-            |(&int, length)| (Option::Some(int), length),
+            || (None, 1),
+            |(&int, length)| (Some(int), length),
         );
 }
 
 fn parse_line(slice: &str) -> u32 {
-    let mut first_digit: u32 = 0;
+    // TODO: This parsing loop is an absolute mess, and the reverse one is even worse
+
+    let mut first_digit: Option<u32> = None;
     let mut start_slice = slice;
     loop {
         let (maybe_digit, length) = parse_digit(start_slice);
         if let Some(i) = maybe_digit {
-            first_digit = i;
+            first_digit = Some(i);
             break;
         }
         start_slice = &start_slice[length..];
     }
 
-    let mut last_digit: u32 = 0;
+    let mut last_digit: Option<u32> = None;
     let mut end_index = slice.len() - 1;
     loop {
         let end_slice = &slice[end_index..];
         let (maybe_digit, length) = parse_digit(end_slice);
-        println!("{} {:?} {}", end_slice, maybe_digit, length);
         if let Some(i) = maybe_digit {
-            last_digit = i;
+            last_digit = Some(i);
             break;
         }
         end_index -= length;
     }
 
-    return (first_digit * 10) + last_digit;
+    return (first_digit.unwrap() * 10) + last_digit.unwrap();
 }
 
 fn main() {
