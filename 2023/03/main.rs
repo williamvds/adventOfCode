@@ -48,6 +48,46 @@ fn find_adjacent_numbers(numbers: &HashSet<Number>, symbols: &Vec<usize>) -> Has
         .collect()
 }
 
+fn incremental_parse_numbers(
+    state: (u32, HashSet<Number>, Vec<usize>),
+    line: &str,
+) -> (u32, HashSet<Number>, Vec<usize>) {
+    let (sum, previous_unmatched_numbers, previous_symbols) = &state;
+    let numbers = get_numbers(line);
+    let symbols = get_symbols(line);
+
+    #[cfg(debug_assertions)]
+    {
+        println!("numbers: {:?}, symbols={:?}", numbers, symbols);
+    };
+
+    let part_numbers = find_adjacent_numbers(&numbers, &previous_symbols)
+        .union(&find_adjacent_numbers(&numbers, &symbols))
+        .cloned()
+        .collect();
+
+    let previous_part_numbers = find_adjacent_numbers(&previous_unmatched_numbers, &symbols);
+
+    let unmatched_numbers = numbers.difference(&part_numbers).cloned().collect();
+
+    #[cfg(debug_assertions)]
+    {
+        println!(
+            "matched previous numbers: {:?}, matched numbers: {:?}, unmatched numbers={:?}\n",
+            previous_part_numbers, part_numbers, unmatched_numbers
+        );
+    };
+
+    return (
+        sum + part_numbers
+            .union(&previous_part_numbers)
+            .map(|n| n.value)
+            .sum::<u32>(),
+        unmatched_numbers,
+        symbols,
+    );
+}
+
 fn main() {
     let lines: Vec<String> = io::stdin()
         .lines()
@@ -55,44 +95,9 @@ fn main() {
         .filter(|s| !s.is_empty())
         .collect();
 
-    let (result, _, _) = lines.iter().fold(
+    let (result, _, _) = lines.iter().map(|l| l.as_str()).fold(
         (0u32, HashSet::new(), Vec::new()),
-        |(sum, previous_unmatched_numbers, previous_symbols), line| {
-            let numbers = get_numbers(line);
-            let symbols = get_symbols(line);
-
-            #[cfg(debug_assertions)]
-            {
-                println!("numbers: {:?}, symbols={:?}", numbers, symbols);
-            };
-
-            let part_numbers = find_adjacent_numbers(&numbers, &previous_symbols)
-                .union(&find_adjacent_numbers(&numbers, &symbols))
-                .cloned()
-                .collect();
-
-            let previous_part_numbers =
-                find_adjacent_numbers(&previous_unmatched_numbers, &symbols);
-
-            let unmatched_numbers = numbers.difference(&part_numbers).cloned().collect();
-
-            #[cfg(debug_assertions)]
-            {
-                println!(
-                "matched previous numbers: {:?}, matched numbers: {:?}, unmatched numbers={:?}\n",
-                previous_part_numbers, part_numbers, unmatched_numbers
-            );
-            };
-
-            return (
-                sum + part_numbers
-                    .union(&previous_part_numbers)
-                    .map(|n| n.value)
-                    .sum::<u32>(),
-                unmatched_numbers,
-                symbols,
-            );
-        },
+        incremental_parse_numbers,
     );
 
     println!("{}", result);
