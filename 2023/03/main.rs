@@ -89,16 +89,14 @@ fn incremental_parse_numbers(
 }
 
 fn main() {
-    let lines: Vec<String> = io::stdin()
+    let (result, _, _) = io::stdin()
         .lines()
         .map(Result::unwrap)
         .filter(|s| !s.is_empty())
-        .collect();
-
-    let (result, _, _) = lines.iter().map(|l| l.as_str()).fold(
-        (0u32, HashSet::new(), Vec::new()),
-        incremental_parse_numbers,
-    );
+        .fold(
+            (0u32, HashSet::new(), Vec::new()),
+            |state, line| incremental_parse_numbers(state, line.as_str()),
+        );
 
     println!("{}", result);
 }
