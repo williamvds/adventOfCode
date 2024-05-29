@@ -1,7 +1,7 @@
 use core::ops::Range;
+use lazy_static::lazy_static;
 use regex::Regex;
 use std::{collections::HashSet, io};
-use lazy_static::lazy_static;
 
 #[derive(Hash, PartialEq, Eq, Clone, Debug)]
 struct Number {
@@ -36,7 +36,7 @@ fn get_symbols(line: &str) -> Vec<usize> {
 }
 
 fn find_adjacent_numbers(numbers: &HashSet<Number>, symbols: &Vec<usize>) -> HashSet<Number> {
-    return numbers
+    numbers
         .into_iter()
         .filter_map(|n| {
             if symbols.into_iter().any(|s| n.range.contains(&s)) {
@@ -45,31 +45,55 @@ fn find_adjacent_numbers(numbers: &HashSet<Number>, symbols: &Vec<usize>) -> Has
                 None
             }
         })
-        .collect();
-}
-
-fn parse_line(line: &str) -> (Vec<u32>, HashSet<Number>, Vec<usize>) {
-    let numbers = get_numbers(line);
-    let symbols = get_symbols(line);
-    let adjacent = find_adjacent_numbers(&numbers, &symbols);
-
-    (
-        adjacent.iter().map(|n| n.value).collect(),
-        numbers.difference(&adjacent).cloned().collect(),
-        symbols,
-    )
+        .collect()
 }
 
 fn main() {
-    let result = io::stdin()
+    let lines: Vec<String> = io::stdin()
         .lines()
         .map(Result::unwrap)
         .filter(|s| !s.is_empty())
-        .fold(0u32, |sum, line| {
-            let (part_numbers, line_numbers, line_symbol_locations) = parse_line(line.as_str());
-            println!("Found: {:?}, line_numbers={:?}, line_symbol_locations={:?}", part_numbers, line_numbers, line_symbol_locations);
-            return sum + part_numbers.iter().sum::<u32>();
-        });
+        .collect();
+
+    let (result, _, _) = lines.iter().fold(
+        (0u32, HashSet::new(), Vec::new()),
+        |(sum, previous_unmatched_numbers, previous_symbols), line| {
+            let numbers = get_numbers(line);
+            let symbols = get_symbols(line);
+
+            #[cfg(debug_assertions)]
+            {
+                println!("numbers: {:?}, symbols={:?}", numbers, symbols);
+            };
+
+            let part_numbers = find_adjacent_numbers(&numbers, &previous_symbols)
+                .union(&find_adjacent_numbers(&numbers, &symbols))
+                .cloned()
+                .collect();
+
+            let previous_part_numbers =
+                find_adjacent_numbers(&previous_unmatched_numbers, &symbols);
+
+            let unmatched_numbers = numbers.difference(&part_numbers).cloned().collect();
+
+            #[cfg(debug_assertions)]
+            {
+                println!(
+                "matched previous numbers: {:?}, matched numbers: {:?}, unmatched numbers={:?}\n",
+                previous_part_numbers, part_numbers, unmatched_numbers
+            );
+            };
+
+            return (
+                sum + part_numbers
+                    .union(&previous_part_numbers)
+                    .map(|n| n.value)
+                    .sum::<u32>(),
+                unmatched_numbers,
+                symbols,
+            );
+        },
+    );
 
     println!("{}", result);
 }
